@@ -1,0 +1,19 @@
+{
+  "name": "slacker",
+  "version": "1.6.0",
+  "description": "Slack SDK code-mode plugin — Claude writes and executes Python code using slack_sdk to perform any Slack operation dynamically.",
+  "author": {
+    "name": "Saurabh Nandedkar",
+    "url": "https://github.com/EXTREMOPHILARUM"
+  },
+  "keywords": [
+    "slack",
+    "messaging",
+    "block-kit",
+    "code-mode",
+    "sdk"
+  ],
+  "license": "MIT",
+  "skills": "./skills",
+  "commands": "./commands"
+}

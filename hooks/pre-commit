@@ -1,0 +1,61 @@
+#!/usr/bin/env bash
+# Pre-commit hook: ensure version is bumped when plugin files change.
+# Skips check if ONLY version files or CLAUDE.md/README.md changed.
+
+set -euo pipefail
+
+VERSION_FILES=(
+    ".claude-plugin/marketplace.json"
+    "slacker/.claude-plugin/plugin.json"
+    "slacker/pyproject.toml"
+)
+
+# Get list of staged files
+STAGED=$(git diff --cached --name-only)
+
+# If nothing staged, skip
+[ -z "$STAGED" ] && exit 0
+
+# Files that DON'T require a version bump
+SKIP_PATTERNS="^(CLAUDE\.md|README\.md|\.gitignore)$"
+
+# Check if any non-skip, non-version files are staged
+HAS_REAL_CHANGES=false
+for file in $STAGED; do
+    # Skip version files themselves
+    is_version_file=false
+    for vf in "${VERSION_FILES[@]}"; do
+        [ "$file" = "$vf" ] && is_version_file=true && break
+    done
+    $is_version_file && continue
+
+    # Skip docs-only changes
+    echo "$file" | grep -qE "$SKIP_PATTERNS" && continue
+
+    HAS_REAL_CHANGES=true
+    break
+done
+
+# If only docs/version files changed, no bump needed
+$HAS_REAL_CHANGES || exit 0
+
+# Check that at least one version file is in the staged changes
+VERSION_BUMPED=false
+for vf in "${VERSION_FILES[@]}"; do
+    echo "$STAGED" | grep -q "^${vf}$" && VERSION_BUMPED=true && break
+done
+
+if ! $VERSION_BUMPED; then
+    echo ""
+    echo "ERROR: Version not bumped!"
+    echo ""
+    echo "You have staged changes but didn't update the version."
+    echo "Bump the version in all three files:"
+    echo "  1. .claude-plugin/marketplace.json"
+    echo "  2. slacker/.claude-plugin/plugin.json"
+    echo "  3. slacker/pyproject.toml"
+    echo ""
+    echo "To skip this check: git commit --no-verify"
+    echo ""
+    exit 1
+fi

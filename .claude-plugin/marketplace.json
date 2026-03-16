@@ -1,0 +1,17 @@
+{
+  "name": "slacker",
+  "version": "1.6.0",
+  "description": "Slack code-mode plugin marketplace",
+  "owner": {
+    "name": "Saurabh Nandedkar",
+    "url": "https://github.com/EXTREMOPHILARUM"
+  },
+  "plugins": [
+    {
+      "name": "slacker",
+      "source": "./slacker",
+      "description": "Slack SDK code-mode plugin — Claude writes and executes Python code using slack_sdk to perform any Slack operation dynamically.",
+      "version": "1.6.0"
+    }
+  ]
+}
